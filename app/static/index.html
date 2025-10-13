@@ -35,7 +35,12 @@
       Will it rain today?
     </button>
 
-  <div id="result" class="mt-6 text-center" aria-live="polite"></div>
+    <div id="result" class="mt-6 text-center" aria-live="polite"></div>
+
+    <div id="visit-counts" class="text-center text-sm text-gray-600 mt-4">
+      <p>Total Visits: <span id="total-visits">Loading...</span></p>
+      <p>Today's Visits: <span id="today-visits">Loading...</span></p>
+    </div>
   </main>
 
   <script>
@@ -138,6 +143,23 @@
         }
       );
     });
+
+    async function recordVisit() {
+      try {
+        // Record the visit and get updated counts
+        const response = await fetch('/visit', { method: 'POST' });
+        if (!response.ok) throw new Error('Failed to record visit');
+        const stats = await response.json();
+        document.getElementById('total-visits').textContent = stats.total_visits;
+        document.getElementById('today-visits').textContent = stats.today_visits;
+      } catch (error) {
+        console.error('Error recording visit:', error);
+      }
+    }
+
+    // Record visit on page load
+    window.onload = () => recordVisit();
   </script>
 </body>
 </html>
+

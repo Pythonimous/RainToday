@@ -147,14 +147,16 @@
 
 **Goal:** Track and show visits across deployments.
 
-* [ ] Implement persistent storage (`data/stats.json` or SQLite).
-* [ ] Increment `total_visits` and `today_visits`.
-* [ ] Create `/stats` endpoint.
-* [ ] Display counts on frontend.
-* [ ] Ensure atomic writes.
-* [ ] Test across restarts.
+* [x] Implement persistent storage (SQLite with `data/stats.db`).
+* [x] Increment `total_visits` and `today_visits`.
+* [x] Create `/stats` endpoint (read-only).
+* [x] Create `/visit` endpoint (increment and return counts).
+* [x] Display counts on frontend.
+* [x] Ensure atomic writes with SQLite transactions.
+* [x] Test count persistence across restarts (integration tests).
+* [x] Refactor API: separate read and increment endpoints for cleaner design.
 
-**Deliverable:** Working, persistent visit counter.
+**Deliverable:** Working, persistent visit counter with clean API separation.
 
 ---
 
@@ -207,5 +209,3 @@
 * [ ] Multi-language support.
 * [ ] Persistent user preferences.
 * [ ] Animated weather icons or subtle effects.
-
-```

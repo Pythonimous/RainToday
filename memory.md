@@ -3,13 +3,19 @@
 ## Project State (2025-10-13)
 
 - Type checking is part of the standard gate: `mypy.ini` excludes test modules while covering application code.
-- README and `.github/instructions/development.instructions.md` now document the validation checklist (lint, mypy, pytest) and testing taxonomy.
-- Phase 8 is now complete: full Playwright E2E test suite covering smoke tests, city search, horizon selection, geolocation flows, and background color changes.
-- E2E tests use mocked API responses and browser permissions to ensure deterministic, isolated testing.
-- Test structure: `tests/e2e/` with conftest.py, 5 test modules, 17 test cases total.
-- All E2E tests pass cleanly; lint and type checks remain green.
-- `run_e2e_tests.sh` script provided for convenient E2E test execution with server check.
-- Requirements updated with `playwright` and `pytest-playwright` packages.
-- pytest.ini updated with `e2e` marker for test categorization.
+- README and `.github/instructions/development.instructions.md` document the validation checklist (lint, mypy, pytest) and testing taxonomy.
+- **Phase 9 (Visitor Counter) is complete**: SQLite-based persistent counter with clean API design.
+  - `/visit` (POST): Records a visit, increments counters, returns updated stats.
+  - `/stats` (GET): Read-only endpoint to fetch current visit counts without incrementing.
+  - Database: `data/stats.db` with atomic SQLite transactions.
+  - Tests: Unit tests for db functions, integration tests for endpoints and persistence, E2E tests for UI display.
+  - Frontend: Calls `/visit` on page load automatically via JavaScript.
+- **Phase 8 (E2E Testing)**: Full Playwright test suite with 5 modules covering all major user flows.
+- Test structure follows best practices:
+  - `tests/unit/`: Isolated function tests with mocks
+  - `tests/integration/`: API endpoint tests and database persistence tests  
+  - `tests/e2e/`: Full browser-based Playwright tests
+  - `tests/lint/`: Flake8 conformance checks
+- All tests pass: 19 unit/integration tests, lint and mypy checks green.
 
-**Next:** Move to Phase 9 (Visitor Counter and Persistence) or Phase 10 (UI Enhancements) based on priorities.
+**Next:** Move to Phase 10 (UI Enhancements) to polish the user interface.

@@ -13,7 +13,12 @@ def base_url() -> str:
 
 @pytest.fixture
 def app_page(page: Page, base_url: str) -> Page:
-    """Navigate to the application homepage before each test."""
+    """
+    Navigate to the application homepage before each test.
+
+    Note: This will trigger the /visit endpoint via JavaScript,
+    incrementing the counter. Tests should account for this behavior.
+    """
     page.goto(base_url)
     return page
 

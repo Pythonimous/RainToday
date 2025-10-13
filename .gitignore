@@ -83,3 +83,4 @@ Thumbs.db
 
 # Local data
 /data/*.json
+/data/*.db

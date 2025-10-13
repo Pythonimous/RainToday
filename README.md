@@ -5,15 +5,16 @@
 An interactive microservice that answers “Will it rain today?” for your location or any city — fast, fun, and vibe-coded. Crafted with test-driven development and maximum test coverage for confidence.
 
 ## Features
-- **FastAPI backend** with `/rain` and `/geocode` endpoints (uses Open-Meteo, no API key required)
+- **FastAPI backend** with `/rain`, `/geocode`, `/stats`, and `/visit` endpoints (uses Open-Meteo, no API key required)
 - **Static HTML frontend** (Tailwind CSS via CDN)
 - **Geolocation**: Uses your browser to get your location (with fallback to manual city input)
 - **Manual city search**: Enter any city name to check rain status anywhere in the world
 - **Live rain check**: Click the button or search to get a real-time answer
 - **Time horizon control**: Choose between Today, 1h, 3h, or 6h forecast using a slider/stepper
 - **Background color** changes based on rain condition (rain, maybe, no rain)
-- **Humorous responses**: Now fully externalized in `data/messages.json` for easy editing and live updates
+- **Humorous responses**: Fully externalized in `data/messages.json` for easy editing and live updates
 - **Live message updates**: Edit `data/messages.json` and see new messages instantly, no backend restart required
+- **Visitor counter**: Tracks total and daily visits with SQLite persistence across server restarts
 - **Fully responsive and centered UI**
 - **Multi-city and international support** (Latin/English names recommended)
 
@@ -84,15 +85,29 @@ An interactive microservice that answers “Will it rain today?” for your loca
 
 
 ## Architecture
-- `/rain` endpoint: Accepts `lat`, `lon`, and `horizon` ("today", "1h", "3h", or "6h"). Returns JSON with rain status, condition, and a **randomized humorous message** (from `data/messages.json`).
-- `/geocode` endpoint: Accepts `city` param, returns `{lat, lon, name}` for manual city search (uses Open-Meteo geocoding).
-- Rain logic: If `precipitation_probability > 60` or `precipitation > 0.5mm`, returns "rain". If `30 < probability <= 60`, returns "maybe". Otherwise, returns "no_rain".
-- **Humor messages are externalized**: You can edit `data/messages.json` to add, remove, or change responses for each condition. Changes are reflected instantly in the API and frontend.
-- Frontend: Uses Tailwind for layout and transitions, updates background color per rain condition, and supports both geolocation and manual city search. The humorous message is displayed prominently in the result area.
+
+### API Endpoints
+- **`GET /rain`**: Accepts `lat`, `lon`, and `horizon` ("today", "1h", "3h", or "6h"). Returns JSON with rain status, condition, and a randomized humorous message (from `data/messages.json`).
+- **`GET /geocode`**: Accepts `city` param, returns `{lat, lon, name}` for manual city search (uses Open-Meteo geocoding).
+- **`GET /stats`**: Read-only endpoint that returns current visit statistics without incrementing counters.
+- **`POST /visit`**: Records a new visit, increments counters, and returns updated statistics.
+
+### Business Logic
+- **Rain logic**: If `precipitation_probability > 60` or `precipitation > 0.5mm`, returns "rain". If `30 < probability <= 60`, returns "maybe". Otherwise, returns "no_rain".
+- **Humor messages**: Externalized in `data/messages.json`. Edit this file to add, remove, or change responses for each condition. Changes are reflected instantly.
+- **Visitor tracking**: SQLite database (`data/stats.db`) tracks total visits and daily visits. Counts persist across server restarts. Daily visits reset at midnight local time.
+
+### Frontend
+- Uses Tailwind for layout and transitions
+- Updates background color per rain condition
+- Supports both geolocation and manual city search
+- Calls `POST /visit` on page load to record visit and display counts
+- Displays humorous message prominently in result area
 
 
 ## Data
-- `data/messages.json`: Contains all humorous responses for each rain condition. Edit this file to update or add new messages. No backend restart required.
+- **`data/messages.json`**: Contains all humorous responses for each rain condition. Edit this file to update or add new messages. No backend restart required.
+- **`data/stats.db`**: SQLite database that persists visitor counts (total and daily). Automatically created on first run.
 
 ## References
 - See `.github/copilot-instructions.md` for full architecture and workflow details.

@@ -1,6 +1,6 @@
-
 import json
 import random
+import sqlite3
 from pathlib import Path
 from typing import Dict
 
@@ -9,8 +9,11 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.db import init_db, increment_visits, DB_PATH
+
 
 messages_path = Path(__file__).parent.parent / "data" / "messages.json"
+stats_path = Path(__file__).parent.parent / "data" / "stats.json"
 
 
 def load_messages():
@@ -33,6 +36,11 @@ app = FastAPI()
 # Serve static files
 static_dir = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+
+@app.on_event("startup")
+def startup_event():
+    init_db()
 
 
 @app.get("/geocode")
@@ -122,6 +130,32 @@ def rain(
         "horizon": horizon,
         "hours": hours
     }
+
+
+@app.get("/stats")
+def get_stats():
+    """
+    Get current visit statistics without incrementing counters.
+    Read-only endpoint for displaying stats.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT total_visits, today_visits, last_updated "
+        "FROM visit_stats WHERE id = 1"
+    )
+    total_visits, today_visits, last_updated = cursor.fetchone()
+    conn.close()
+    return {"total_visits": total_visits, "today_visits": today_visits}
+
+
+@app.post("/visit")
+def record_visit():
+    """
+    Record a new visit by incrementing counters.
+    Returns the updated visit statistics.
+    """
+    return increment_visits()
 
 
 @app.get("/", response_class=HTMLResponse)
