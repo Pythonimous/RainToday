@@ -61,11 +61,11 @@
 
 **Goal:** Add “Today / 1h / 3h / 6h” slider control.
 
-* [ ] Implement slider/stepper UI.
-* [ ] Extend `/rain` to handle horizon logic.
-* [ ] Query time range dynamically.
-* [ ] Display selected horizon.
-* [ ] Validate accuracy.
+* [x] Implement slider/stepper UI.
+* [x] Extend `/rain` to handle horizon logic.
+* [x] Query time range dynamically.
+* [x] Display selected horizon.
+* [x] Validate accuracy.
 
 **Deliverable:** Functional time horizon selection.
 

@@ -36,12 +36,22 @@ def geocode(city: str = Query(..., description="City name to geocode")):
     return {"lat": result["latitude"], "lon": result["longitude"], "name": result.get("name", city)}
 
 
+
 @app.get("/rain")
 def rain(
     lat: float = Query(..., description="Latitude"),
     lon: float = Query(..., description="Longitude"),
-    horizon: int = Query(24, description="Forecast horizon in hours (default: 24)")
+    horizon: str = Query("today", description="Forecast horizon: today, 1h, 3h, 6h")
 ):
+    # Map horizon string to number of hours
+    horizon_map = {
+        "today": 24,
+        "1h": 1,
+        "3h": 3,
+        "6h": 6
+    }
+    hours = horizon_map.get(horizon, 24)
+
     # Query Open-Meteo API for hourly precipitation probability and precipitation
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
@@ -58,8 +68,8 @@ def rain(
         raise HTTPException(status_code=502, detail="Weather API error")
 
     # Extract relevant data for the requested horizon (hours)
-    precip_prob = data.get("hourly", {}).get("precipitation_probability", [])[:horizon]
-    precip_mm = data.get("hourly", {}).get("precipitation", [])[:horizon]
+    precip_prob = data.get("hourly", {}).get("precipitation_probability", [])[:hours]
+    precip_mm = data.get("hourly", {}).get("precipitation", [])[:hours]
     max_prob = max(precip_prob) if precip_prob else 0
     total_mm = sum(precip_mm) if precip_mm else 0
 
@@ -88,7 +98,8 @@ def rain(
         "message": message,
         "lat": lat,
         "lon": lon,
-        "horizon": horizon
+        "horizon": horizon,
+        "hours": hours
     }
 
 @app.get("/", response_class=HTMLResponse)

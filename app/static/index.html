@@ -14,19 +14,28 @@
 
     <form id="city-form" class="flex gap-2 mb-4" autocomplete="off" onsubmit="return false;">
 
+
       <input id="city-input" type="text" placeholder="Enter city name..." class="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
       <button id="city-search-btn" type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg shadow">Search</button>
     </form>
+    <div class="mb-4">
+      <label for="horizon-slider" class="block text-sm font-medium text-gray-700 mb-1">Forecast horizon:</label>
+      <div class="flex items-center gap-2">
+        <input id="horizon-slider" type="range" min="0" max="3" value="0" class="w-full accent-indigo-600" />
+        <span id="horizon-label" class="text-sm font-semibold text-indigo-700">Today</span>
+      </div>
+    </div>
     <div class="text-xs text-gray-500 mb-4" id="city-disclaimer">
       <span>Tip: For best results, enter city names in English or Latin characters. Non-Latin scripts (e.g., 中文, кириллица) may not be supported yet.</span>
     </div>
+
 
     <button id="rain-btn"
       class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition mb-4">
       Will it rain today?
     </button>
 
-    <div id="result" class="mt-6 text-center" aria-live="polite"></div>
+  <div id="result" class="mt-6 text-center" aria-live="polite"></div>
   </main>
 
   <script>
@@ -46,6 +55,23 @@
       document.body.classList.add(picked || 'bg-indigo-100');
     }
 
+
+    // Horizon slider logic
+    const horizonSlider = document.getElementById('horizon-slider');
+    const horizonLabel = document.getElementById('horizon-label');
+    const horizonOptions = [
+      { label: 'Today', value: 'today' },
+      { label: '1h', value: '1h' },
+      { label: '3h', value: '3h' },
+      { label: '6h', value: '6h' }
+    ];
+    function updateHorizonLabel() {
+      const idx = parseInt(horizonSlider.value, 10);
+      horizonLabel.textContent = horizonOptions[idx].label;
+    }
+    horizonSlider.addEventListener('input', updateHorizonLabel);
+    updateHorizonLabel();
+
     // City search logic
     document.getElementById('city-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -60,7 +86,9 @@
         if (!geoRes.ok) throw new Error('Geocoding failed');
         const geo = await geoRes.json();
         resultDiv.textContent = 'Checking the weather...';
-        const rainRes = await fetch(`/rain?lat=${geo.lat}&lon=${geo.lon}`);
+        const horizonIdx = parseInt(horizonSlider.value, 10);
+        const horizon = horizonOptions[horizonIdx].value;
+        const rainRes = await fetch(`/rain?lat=${geo.lat}&lon=${geo.lon}&horizon=${horizon}`);
         if (!rainRes.ok) throw new Error('Weather fetch failed');
         const data = await rainRes.json();
         resultDiv.innerHTML = `<span class="font-bold text-lg">${(data.message ?? 'No data')}</span>`;
@@ -83,7 +111,9 @@
           const lat = position.coords.latitude.toFixed(4);
           const lon = position.coords.longitude.toFixed(4);
           resultDiv.textContent = 'Checking the weather...';
-          fetch(`/rain?lat=${lat}&lon=${lon}`)
+          const horizonIdx = parseInt(horizonSlider.value, 10);
+          const horizon = horizonOptions[horizonIdx].value;
+          fetch(`/rain?lat=${lat}&lon=${lon}&horizon=${horizon}`)
             .then((response) => {
               if (!response.ok) throw new Error('API error');
               return response.json();

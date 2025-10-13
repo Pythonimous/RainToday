@@ -10,6 +10,7 @@ An interactive microservice that answers “Will it rain today?” for your loca
 - **Geolocation**: Uses your browser to get your location (with fallback to manual city input)
 - **Manual city search**: Enter any city name to check rain status anywhere in the world
 - **Live rain check**: Click the button or search to get a real-time answer
+- **Time horizon control**: Choose between Today, 1h, 3h, or 6h forecast using a slider/stepper
 - **Background color** changes based on rain condition (rain, maybe, no rain)
 - **Humorous responses**
 - **Fully responsive and centered UI**
@@ -23,6 +24,7 @@ An interactive microservice that answers “Will it rain today?” for your loca
 2. **Open your browser:**
 	Go to [http://localhost:8000](http://localhost:8000)
 3. **Check the weather:**
+	- Use the slider/stepper to select your forecast horizon: Today, 1h, 3h, or 6h
 	- Click "Will it rain today?" and allow location access for a personalized answer
 	- Or, enter a city name and click "Search" to check any location
 	- If denied, you'll see a helpful fallback and can use manual search
@@ -37,7 +39,7 @@ An interactive microservice that answers “Will it rain today?” for your loca
 - **Instructions:** `.github/copilot-instructions.md` and `.github/instructions/rules.instructions.md`
 
 ## Architecture
-- `/rain` endpoint: Accepts `lat`, `lon`, and optional `horizon` (hours). Returns JSON with rain status, condition, and a randomized message.
+- `/rain` endpoint: Accepts `lat`, `lon`, and `horizon` ("today", "1h", "3h", or "6h"). Returns JSON with rain status, condition, and a randomized message.
 - `/geocode` endpoint: Accepts `city` param, returns `{lat, lon, name}` for manual city search (uses Open-Meteo geocoding).
 - Rain logic: If `precipitation_probability > 60` or `precipitation > 0.5mm`, returns "rain". If `30 < probability <= 60`, returns "maybe". Otherwise, returns "no_rain".
 - Frontend: Uses Tailwind for layout and transitions, updates background color per rain condition, and supports both geolocation and manual city search.
