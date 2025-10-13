@@ -3,3 +3,5 @@ uvicorn
 requests
 httpx
 pytest
+flake8
+types-requests

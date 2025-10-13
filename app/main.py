@@ -1,11 +1,18 @@
-from fastapi import FastAPI
+
+import json
+import random
+from pathlib import Path
+from typing import Dict
+
+import requests
+from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from pathlib import Path
-import json
 
 
 messages_path = Path(__file__).parent.parent / "data" / "messages.json"
+
+
 def load_messages():
     try:
         with open(messages_path, "r", encoding="utf-8") as f:
@@ -18,6 +25,7 @@ def load_messages():
             "maybe": ["Maybe. The clouds are indecisive."]
         }
 
+
 messages = load_messages()
 
 app = FastAPI()
@@ -27,20 +35,15 @@ static_dir = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 
-# /rain endpoint
-
-
-from fastapi import Query, HTTPException
-import requests
-from typing import Optional
-import random
-
-
-# /geocode endpoint
 @app.get("/geocode")
 def geocode(city: str = Query(..., description="City name to geocode")):
     url = "https://geocoding-api.open-meteo.com/v1/search"
-    params = {"name": city, "count": 1, "language": "auto", "format": "json"}
+    params: Dict[str, str | int] = {
+        "name": city,
+        "count": 1,
+        "language": "auto",
+        "format": "json",
+    }
     try:
         resp = requests.get(url, params=params, timeout=5)
         data = resp.json()
@@ -50,8 +53,11 @@ def geocode(city: str = Query(..., description="City name to geocode")):
     if not results:
         raise HTTPException(status_code=404, detail="City not found")
     result = results[0]
-    return {"lat": result["latitude"], "lon": result["longitude"], "name": result.get("name", city)}
-
+    return {
+        "lat": result["latitude"],
+        "lon": result["longitude"],
+        "name": result.get("name", city)
+    }
 
 
 @app.get("/rain")
@@ -61,7 +67,7 @@ def rain(
     horizon: str = Query("today", description="Forecast horizon: today, 1h, 3h, 6h")
 ):
     # Map horizon string to number of hours
-    horizon_map = {
+    horizon_map: Dict[str, int] = {
         "today": 24,
         "1h": 1,
         "3h": 3,
@@ -71,7 +77,7 @@ def rain(
 
     # Query Open-Meteo API for hourly precipitation probability and precipitation
     url = "https://api.open-meteo.com/v1/forecast"
-    params = {
+    params: Dict[str, str | int | float] = {
         "latitude": lat,
         "longitude": lon,
         "hourly": "precipitation_probability,precipitation",
@@ -81,7 +87,7 @@ def rain(
     try:
         resp = requests.get(url, params=params, timeout=5)
         data = resp.json()
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=502, detail="Weather API error")
 
     # Extract relevant data for the requested horizon (hours)
@@ -101,7 +107,6 @@ def rain(
         condition = "no_rain"
         will_rain = False
 
-
     # Use messages loaded from messages.json
     global messages
     # Reload messages on every request to allow live updates without restart
@@ -117,6 +122,7 @@ def rain(
         "horizon": horizon,
         "hours": hours
     }
+
 
 @app.get("/", response_class=HTMLResponse)
 def root():

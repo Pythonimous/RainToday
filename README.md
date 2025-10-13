@@ -34,10 +34,39 @@ An interactive microservice that answers “Will it rain today?” for your loca
 ## Development
 - **Backend:** `app/main.py` (FastAPI)
 - **Frontend:** `app/static/index.html` (Tailwind, JS)
-- **Tests:** `tests/` (pytest, all logic and endpoints covered)
+- **Tests:**
+	- `tests/unit/` — Unit tests (no HTTP calls)
+	- `tests/integration/` — Integration/API endpoint tests
+	- `tests/e2e/` — End-to-end browser tests (Playwright)
+	- `tests/conftest.py` — Shared fixtures
+	- `tests/lint/test_flake8.py` — Lint gate ensuring the codebase stays flake8-clean
+- **Guidelines:** `.github/instructions/development.instructions.md` (workflow, testing, lint/type policy)
 - **Memory:** `memory.md` (project state)
 - **TODOs:** `TODO.md` (task tracking)
 - **Instructions:** `.github/copilot-instructions.md` and `.github/instructions/rules.instructions.md`
+
+### Validation Checklist
+
+- Lint gate:
+	```
+	PYTHONPATH=. pytest -m lint
+	```
+- Type checking:
+	```
+	PYTHONPATH=. mypy .
+	```
+- Unit tests:
+	```
+	pytest -m unit
+	```
+- Integration tests:
+	```
+	pytest -m integration
+	```
+- Full suite:
+	```
+	PYTHONPATH=. pytest
+	```
 
 
 ## Architecture

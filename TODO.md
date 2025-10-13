@@ -86,7 +86,64 @@
 
 ---
 
-## Phase 7. Visitor Counter and Persistence
+## Phase 7. Test Suite Refactor and Integration Testing
+
+**Goal:** Reorganize existing tests into clear categories and formalize integration testing structure.
+
+* [x] Create structured testing layout:
+
+  ```
+  tests/
+  ├── unit/
+  ├── integration/
+  └── e2e/          # (empty for now, to be used in Phase 8)
+  ```
+* [x] Move existing tests into appropriate folders:
+
+  * **`unit/`** → tests that validate single functions or small components in isolation (no HTTP calls).
+  * **`integration/`** → tests that call API endpoints or combine multiple components.
+* [x] Update import paths and fixtures to reflect new folder structure.
+* [x] Add a `conftest.py` at the root of `tests/` to share fixtures (e.g. FastAPI `TestClient`).
+* [x] Use `pytest.mark.integration` and `pytest.mark.unit` markers to distinguish test types.
+* [x] Verify all existing tests run after reorganization (`pytest -m "unit or integration"`).
+* [x] Add one or two new **explicit integration tests** for `/rain` and `/geocode` endpoints to confirm proper separation.
+* [x] Update `README.md` with test structure and example commands:
+
+  ```
+  pytest -m unit
+  pytest -m integration
+  ```
+* [x] Update `.github/instructions/development.instructions.md` with new testing classification (see below).
+* [x] Add linting/layered CI enforcement details once process stabilizes.
+
+**Deliverable:** Structured and categorized test suite distinguishing unit and integration layers.
+
+---
+
+## Phase 8. End-to-End Testing
+
+**Goal:** Introduce automated browser-based end-to-end tests using Playwright to verify critical user flows and backend integration.
+
+* [ ] Set up Playwright testing environment (`pip install playwright pytest-playwright`).
+* [ ] Run `playwright install` to install browser drivers.
+* [ ] Create `tests/e2e/` directory and add basic Playwright configuration.
+* [ ] Write initial tests for key flows:
+
+  * Fetching `/rain` endpoint via frontend interaction.
+  * Handling of geolocation permission granted/denied.
+  * Manual city input fallback.
+  * Slider (time horizon) control behavior.
+  * Message display and background color switch.
+* [ ] Implement utility for test data or mock API responses if needed.
+* [ ] Integrate Playwright tests into the existing `pytest` workflow.
+* [ ] Add an E2E section to the `README.md` describing how to run tests.
+* [ ] Run all E2E tests locally and fix any failing cases.
+
+**Deliverable:** Functional Playwright setup verifying main user scenarios end-to-end.
+
+---
+
+## Phase 9. Visitor Counter and Persistence
 
 **Goal:** Track and show visits across deployments.
 
@@ -101,7 +158,7 @@
 
 ---
 
-## Phase 8. UI and Visual Enhancements
+## Phase 10. UI and Visual Enhancements
 
 **Goal:** Improve visuals and polish. Thoroughly discuss all the changes with the user throughout.
 
@@ -115,7 +172,7 @@
 
 ---
 
-## Phase 9. Time Zone and Localization
+## Phase 11. Time Zone and Localization
 
 **Goal:** Ensure local “today” correctness.
 
@@ -128,7 +185,7 @@
 
 ---
 
-## Phase 10. Deployment and Domain Setup
+## Phase 12. Deployment and Domain Setup
 
 **Goal:** Deploy and make public.
 
@@ -142,7 +199,7 @@
 
 ---
 
-## Phase 11. Optional / Stretch Goals
+## Phase 13. Optional / Stretch Goals
 
 * [ ] Caching to minimize repeated API calls.
 * [ ] Lightweight analytics (Plausible / GoatCounter).

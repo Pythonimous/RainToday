@@ -2,11 +2,11 @@
 
 ## Project State (2025-10-13)
 
-- **Phase 6 complete:** Humor response system is now fully externalized and dynamic.
-- `data/messages.json` holds all humorous responses for each rain condition (`rain`, `maybe`, `no_rain`).
-- Backend loads messages from this file on every `/rain` request, so updates are live with no restart needed.
-- `/rain` endpoint returns a random message for the detected condition, and the frontend displays it prominently.
-- Manual city input, geolocation, and time horizon selection are all fully integrated and tested.
-- All logic and endpoints are covered by tests, including test isolation for messages.
+- Type checking is part of the standard gate: `mypy.ini` excludes test modules while covering application code.
+- README and `.github/instructions/development.instructions.md` now document the validation checklist (lint, mypy, pytest) and testing taxonomy.
+- Phase 7 documentation tasks are fully closed in `TODO.md`; focus can shift to Phase 8 Playwright scaffolding.
+- Root-level `__init__.py` was removed to keep package resolution unambiguous for mypy.
+- Errant `development-guidelines.md` file at the repo root is gone; guidance now lives in the instructions directory.
+- Requirements now include `types-requests` so HTTP calls retain stub coverage during type checks.
 
-**Next:** Phase 7 (visitor counter and persistence).
+**Next:** Begin Phase 8 by setting up Playwright tooling and authoring the first browser smoke tests.
