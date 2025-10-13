@@ -1,0 +1,26 @@
+{
+	"rain": [
+		"Yes, bring an umbrella! ☔️",
+		"It's raining cats, dogs, and possibly frogs.",
+		"You might want to build an ark today.",
+		"Rain is coming. Time for dramatic window staring.",
+		"Perfect weather for ducks. Not so much for you.",
+		"Hope you like the sound of raindrops!"
+	],
+	"maybe": [
+		"Maybe. The sky is indecisive.",
+		"Flip a coin, or just bring a hat.",
+		"It could drizzle, or it could just be dramatic clouds.",
+		"50/50 chance. Weather roulette!",
+		"The forecast is as uncertain as your last relationship.",
+		"Carry an umbrella just in case. Or don't. Live dangerously."
+	],
+	"no_rain": [
+		"Nope! The sun is winning today.",
+		"Dry as a stand-up comedian's wit.",
+		"No rain. Go frolic!",
+		"Clear skies. Sunglasses recommended.",
+		"Not a drop in sight. Enjoy!",
+		"You won't need a boat today."
+	]
+}
