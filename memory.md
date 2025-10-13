@@ -1,11 +1,14 @@
 
 ## Project State (2025-10-13)
 
-- FastAPI backend serves static frontend and implements `/rain` endpoint.
-- `/rain` endpoint accepts `lat`, `lon`, `horizon` params and returns rain status, message, and details.
-- `/rain` endpoint is fully integrated with Open-Meteo API and applies correct rain logic.
-- Endpoint is fully tested (param validation, structure, rain logic, and real API integration) with pytest.
-- Output is verified to match Open-Meteo API data and logic.
+
+
+- FastAPI backend serves static frontend and implements `/rain` and `/geocode` endpoints.
+- `/rain` endpoint: accepts `lat`, `lon`, `horizon` params, returns rain status, message, and details. Fully integrated with Open-Meteo API and applies correct rain logic.
+- `/geocode` endpoint: accepts `city` param, returns `{lat, lon, name}` using Open-Meteo geocoding API, with `language=auto` for best-effort international support.
+- Manual city input and fallback for denied/missing geolocation are fully implemented in the frontend.
+- Frontend and backend tested with multiple cities (including ambiguous and international names). Non-Latin scripts (e.g., Chinese, Cyrillic) are not supported by Open-Meteo; a disclaimer is shown to users.
+- All Phase 4 TODOs are complete.
 
 ### Frontend MVP (Phase 3)
 - Static HTML frontend uses Tailwind (via CDN) for modern layout and transitions

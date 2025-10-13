@@ -48,10 +48,10 @@
 
 **Goal:** Enable manual city input.
 
-* [ ] Add input field + “Search” button.
-* [ ] Implement `/geocode` endpoint using Open-Meteo geocoding.
-* [ ] Integrate fallback for missing geolocation.
-* [ ] Test multiple cities.
+* [x] Add input field + “Search” button.
+* [x] Implement `/geocode` endpoint using Open-Meteo geocoding.
+* [x] Integrate fallback for missing geolocation.
+* [x] Test multiple cities.
 
 **Deliverable:** Manual location refinement working.
 

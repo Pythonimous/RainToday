@@ -12,10 +12,28 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # /rain endpoint
 
+
 from fastapi import Query, HTTPException
 import requests
 from typing import Optional
 import random
+
+
+# /geocode endpoint
+@app.get("/geocode")
+def geocode(city: str = Query(..., description="City name to geocode")):
+    url = "https://geocoding-api.open-meteo.com/v1/search"
+    params = {"name": city, "count": 1, "language": "auto", "format": "json"}
+    try:
+        resp = requests.get(url, params=params, timeout=5)
+        data = resp.json()
+    except Exception:
+        raise HTTPException(status_code=502, detail="Geocoding API error")
+    results = data.get("results", [])
+    if not results:
+        raise HTTPException(status_code=404, detail="City not found")
+    result = results[0]
+    return {"lat": result["latitude"], "lon": result["longitude"], "name": result.get("name", city)}
 
 
 @app.get("/rain")
