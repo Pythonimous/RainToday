@@ -49,11 +49,11 @@ An interactive microservice that answers “Will it rain today?” for your loca
 
 - Lint gate:
 	```
-	PYTHONPATH=. pytest -m lint
+	pytest -m lint
 	```
 - Type checking:
 	```
-	PYTHONPATH=. mypy .
+	mypy .
 	```
 - Unit tests:
 	```
@@ -79,7 +79,7 @@ An interactive microservice that answers “Will it rain today?” for your loca
 	```
 - Full test suite:
 	```
-	PYTHONPATH=. pytest
+	pytest
 	```
 
 

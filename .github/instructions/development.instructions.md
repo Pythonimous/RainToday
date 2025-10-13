@@ -7,15 +7,15 @@ Work in short, test-driven loops:
 1. Write or update the tests you need first. Use `.github/instructions/testing.instructions.md` to choose the right layer and markers.
 2. Implement the feature or fix.
 3. Run the matching test slice (`pytest -m unit`, `pytest -m integration`, or a focused `-k` run).
-4. Run type checks: `PYTHONPATH=. mypy .`.
-5. Run the lint gate: `PYTHONPATH=. pytest -m lint` (executes `tests/lint/test_flake8.py`).
+4. Run type checks: `mypy .`.
+5. Run the lint gate: `pytest -m lint` (executes `tests/lint/test_flake8.py`).
 6. Add or adjust Playwright E2E tests whenever you introduce a new user flow.
 
 ## Validation Checklist
 
 Before committing, run:
-1. `PYTHONPATH=. pytest -m lint`
-2. `PYTHONPATH=. mypy .`
+1. `pytest -m lint`
+2. `mypy .`
 3. `pytest -m "unit or integration"`
 4. `npx playwright test` (once the E2E suite is in place)
 
