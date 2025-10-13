@@ -2,6 +2,23 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+import json
+
+
+messages_path = Path(__file__).parent.parent / "data" / "messages.json"
+def load_messages():
+    try:
+        with open(messages_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        # Fallback to default messages if file missing or invalid
+        return {
+            "rain": ["YES. Bring an umbrella."],
+            "no_rain": ["Nope. Dry as your sense of humor."],
+            "maybe": ["Maybe. The clouds are indecisive."]
+        }
+
+messages = load_messages()
 
 app = FastAPI()
 
@@ -84,13 +101,12 @@ def rain(
         condition = "no_rain"
         will_rain = False
 
-    # Placeholder messages (to be replaced by messages.json in later phase)
-    messages = {
-        "rain": ["YES. Bring an umbrella.", "Rain’s coming. Don’t say I didn’t warn you."],
-        "no_rain": ["Nope. Dry as your sense of humor.", "You’re safe. For now."],
-        "maybe": ["Maybe. The clouds are indecisive.", "Unclear. Flip a coin."]
-    }
-    message = random.choice(messages[condition])
+
+    # Use messages loaded from messages.json
+    global messages
+    # Reload messages on every request to allow live updates without restart
+    messages = load_messages()
+    message = random.choice(messages.get(condition, ["No message available."]))
 
     return {
         "will_rain": will_rain,

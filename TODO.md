@@ -75,12 +75,12 @@
 
 **Goal:** Introduce externalized humorous responses.
 
-* [ ] Create `data/messages.json`.
-* [ ] Load messages in backend.
-* [ ] Select random message per condition.
-* [ ] Return message via `/rain`.
-* [ ] Display message prominently.
-* [ ] Verify messages update without code changes.
+* [x] Create `data/messages.json`.
+* [x] Load messages in backend.
+* [x] Select random message per condition.
+* [x] Return message via `/rain`.
+* [x] Display message prominently.
+* [x] Verify messages update without code changes.
 
 **Deliverable:** Dynamic, externalized humor messages.
 
@@ -103,8 +103,9 @@
 
 ## Phase 8. UI and Visual Enhancements
 
-**Goal:** Improve visuals and polish.
+**Goal:** Improve visuals and polish. Thoroughly discuss all the changes with the user throughout.
 
+* [ ] Rearrange the UI elements to make it make more logical from a user flow standpoint.
 * [ ] Add color themes and subtle animations.
 * [ ] Use responsive design.
 * [ ] Add transition effects for result display.

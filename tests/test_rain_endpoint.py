@@ -1,3 +1,6 @@
+import shutil
+import os
+import importlib
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
@@ -33,6 +36,49 @@ def test_rain_endpoint_valid_params(monkeypatch):
     assert data["will_rain"] is True
     assert data["condition"] == "rain"
     assert "message" in data
+
+
+def test_rain_endpoint_uses_external_messages(tmp_path, monkeypatch):
+    """Test /rain uses messages from data/messages.json by swapping in a test file."""
+    # Write a test messages.json in a temp directory
+    test_messages = {
+        "rain": ["TEST_RAIN_1", "TEST_RAIN_2"],
+        "maybe": ["TEST_MAYBE_1"],
+        "no_rain": ["TEST_NO_RAIN_1"]
+    }
+    test_data_dir = tmp_path / "data"
+    test_data_dir.mkdir()
+    test_messages_path = test_data_dir / "messages.json"
+    with open(test_messages_path, "w") as f:
+        import json
+        json.dump(test_messages, f)
+
+    # Patch the backend to load messages from the test path
+    import app.main as main_mod
+    main_mod.messages_path = test_messages_path
+    # Force reload of messages for this test
+    main_mod.messages = main_mod.load_messages()
+
+    # Simulate rain condition
+    def mock_get_rain(url, params, timeout):
+        class MockResponse:
+            def json(self):
+                return {
+                    "hourly": {
+                        "precipitation_probability": [90, 95, 99],
+                        "precipitation": [1.0, 1.2, 0.8]
+                    }
+                }
+            @property
+            def status_code(self):
+                return 200
+        return MockResponse()
+    monkeypatch.setattr(requests, "get", mock_get_rain)
+    response = client.get("/rain", params={"lat": 1.0, "lon": 2.0, "horizon": "3h"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["condition"] == "rain"
+    assert data["message"] in test_messages["rain"]
 
     # Simulate Open-Meteo API response for no rain
     def mock_get_no_rain(url, params, timeout):
