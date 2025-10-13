@@ -4,9 +4,12 @@
 
 - Type checking is part of the standard gate: `mypy.ini` excludes test modules while covering application code.
 - README and `.github/instructions/development.instructions.md` now document the validation checklist (lint, mypy, pytest) and testing taxonomy.
-- Phase 7 documentation tasks are fully closed in `TODO.md`; focus can shift to Phase 8 Playwright scaffolding.
-- Root-level `__init__.py` was removed to keep package resolution unambiguous for mypy.
-- Errant `development-guidelines.md` file at the repo root is gone; guidance now lives in the instructions directory.
-- Requirements now include `types-requests` so HTTP calls retain stub coverage during type checks.
+- Phase 8 is now complete: full Playwright E2E test suite covering smoke tests, city search, horizon selection, geolocation flows, and background color changes.
+- E2E tests use mocked API responses and browser permissions to ensure deterministic, isolated testing.
+- Test structure: `tests/e2e/` with conftest.py, 5 test modules, 17 test cases total.
+- All E2E tests pass cleanly; lint and type checks remain green.
+- `run_e2e_tests.sh` script provided for convenient E2E test execution with server check.
+- Requirements updated with `playwright` and `pytest-playwright` packages.
+- pytest.ini updated with `e2e` marker for test categorization.
 
-**Next:** Begin Phase 8 by setting up Playwright tooling and authoring the first browser smoke tests.
+**Next:** Move to Phase 9 (Visitor Counter and Persistence) or Phase 10 (UI Enhancements) based on priorities.

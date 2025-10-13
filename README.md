@@ -63,7 +63,21 @@ An interactive microservice that answers “Will it rain today?” for your loca
 	```
 	pytest -m integration
 	```
-- Full suite:
+- End-to-end tests (requires running server):
+	```
+	# Start the server in one terminal:
+	uvicorn app.main:app --host 0.0.0.0 --port 8000
+	
+	# Run E2E tests in another terminal:
+	pytest -m e2e
+	
+	# Or run with visible browser (headed mode):
+	pytest -m e2e --headed
+	
+	# Run with a specific browser:
+	pytest -m e2e --browser firefox
+	```
+- Full test suite:
 	```
 	PYTHONPATH=. pytest
 	```

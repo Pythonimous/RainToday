@@ -69,6 +69,11 @@ coverage.xml
 # Pyre type checker
 .pyre/
 
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
 # VS Code
 .vscode/
 

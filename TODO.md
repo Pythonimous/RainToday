@@ -124,20 +124,20 @@
 
 **Goal:** Introduce automated browser-based end-to-end tests using Playwright to verify critical user flows and backend integration.
 
-* [ ] Set up Playwright testing environment (`pip install playwright pytest-playwright`).
-* [ ] Run `playwright install` to install browser drivers.
-* [ ] Create `tests/e2e/` directory and add basic Playwright configuration.
-* [ ] Write initial tests for key flows:
+* [x] Set up Playwright testing environment (`pip install playwright pytest-playwright`).
+* [x] Run `playwright install` to install browser drivers.
+* [x] Create `tests/e2e/` directory and add basic Playwright configuration.
+* [x] Write initial tests for key flows:
 
   * Fetching `/rain` endpoint via frontend interaction.
   * Handling of geolocation permission granted/denied.
   * Manual city input fallback.
   * Slider (time horizon) control behavior.
   * Message display and background color switch.
-* [ ] Implement utility for test data or mock API responses if needed.
-* [ ] Integrate Playwright tests into the existing `pytest` workflow.
-* [ ] Add an E2E section to the `README.md` describing how to run tests.
-* [ ] Run all E2E tests locally and fix any failing cases.
+* [x] Implement utility for test data or mock API responses if needed.
+* [x] Integrate Playwright tests into the existing `pytest` workflow.
+* [x] Add an E2E section to the `README.md` describing how to run tests.
+* [x] Run all E2E tests locally and fix any failing cases.
 
 **Deliverable:** Functional Playwright setup verifying main user scenarios end-to-end.
 
