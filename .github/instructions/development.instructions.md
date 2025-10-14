@@ -1,9 +1,9 @@
 ---
 applyTo: "**"
 ---
-# Development Loop
-
 - Frame the smallest useful change before touching code.
+- Confirm the task against TODO.md and revise the list if priorities shift.
+- Call out scope creep or overengineering as soon as it appears and wait for approval before expanding the task.
 - Write or update the tests that prove the change.
 - Implement just enough code to satisfy the tests.
 - Run the specific `pytest` slice for the area you touched.
