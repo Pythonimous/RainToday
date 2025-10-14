@@ -37,6 +37,9 @@ pytest
 - Run `.github/prompts/make-specs.prompt.md` to generate `specification.md`.
 - Run `.github/prompts/make-todo.prompt.md` to generate `TODO.md`.
 
+## Docs
+- User flows index: `docs/user_flows/USER_FLOWS_INDEX.md`
+
 ## References
 - Development workflow: `.github/instructions/development.instructions.md`
 - Testing workflow: `.github/instructions/testing.instructions.md`

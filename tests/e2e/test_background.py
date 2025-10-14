@@ -27,6 +27,10 @@ def test_background_rain_condition(app_page: Page) -> None:
     app_page.route("**/geocode?*", handle_geocode)
     app_page.route("**/rain?*", handle_rain)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Search for city
     city_input = app_page.locator("#city-input")
     city_input.fill("London")
@@ -35,8 +39,8 @@ def test_background_rain_condition(app_page: Page) -> None:
     search_button.click()
 
     # Wait for result
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("Yes, it will rain!", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("Yes, it will rain!", timeout=5000)
 
     # Verify background is gray for rain
     body = app_page.locator("body")
@@ -64,6 +68,10 @@ def test_background_no_rain_condition(app_page: Page) -> None:
     app_page.route("**/geocode?*", handle_geocode)
     app_page.route("**/rain?*", handle_rain)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Search for city
     city_input = app_page.locator("#city-input")
     city_input.fill("New York")
@@ -72,8 +80,8 @@ def test_background_no_rain_condition(app_page: Page) -> None:
     search_button.click()
 
     # Wait for result
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("No rain today!", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("No rain today!", timeout=5000)
 
     # Verify background is blue for no rain
     body = app_page.locator("body")
@@ -101,6 +109,10 @@ def test_background_maybe_condition(app_page: Page) -> None:
     app_page.route("**/geocode?*", handle_geocode)
     app_page.route("**/rain?*", handle_rain)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Search for city
     city_input = app_page.locator("#city-input")
     city_input.fill("Paris")
@@ -109,8 +121,8 @@ def test_background_maybe_condition(app_page: Page) -> None:
     search_button.click()
 
     # Wait for result
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("There might be a chance of rain.", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("There might be a chance of rain.", timeout=5000)
 
     # Verify background is yellow for maybe
     body = app_page.locator("body")
@@ -139,6 +151,10 @@ def test_background_transitions_between_conditions(app_page: Page) -> None:
     app_page.route("**/geocode?*", handle_geocode)
     app_page.route("**/rain?*", handle_rain_first)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # First search - rain
     city_input = app_page.locator("#city-input")
     city_input.fill("London")
@@ -146,8 +162,8 @@ def test_background_transitions_between_conditions(app_page: Page) -> None:
     search_button = app_page.locator("#city-search-btn")
     search_button.click()
 
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("Rainy day!", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("Rainy day!", timeout=5000)
 
     body = app_page.locator("body")
     expect(body).to_have_class(re.compile(r"bg-gray-200"))
@@ -167,7 +183,7 @@ def test_background_transitions_between_conditions(app_page: Page) -> None:
     city_input.fill("London")
     search_button.click()
 
-    expect(result_div).to_contain_text("All clear now!", timeout=5000)
+    expect(result_message).to_contain_text("All clear now!", timeout=5000)
 
     # Background should now be blue
     expect(body).to_have_class(re.compile(r"bg-blue-200"))

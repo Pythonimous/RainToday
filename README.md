@@ -41,9 +41,13 @@ An interactive microservice that answers “Will it rain today?” for your loca
 	- `tests/e2e/` — End-to-end browser tests (Playwright)
 	- `tests/conftest.py` — Shared fixtures
 	- `tests/lint/test_flake8.py` — Lint gate ensuring the codebase stays flake8-clean
+- **Documentation:**
+	- `docs/user_flows/USER_FLOWS_INDEX.md` — Index of user journeys with links to per-flow docs
+	- `COVERAGE_GAP_ANALYSIS.md` — Missing scenarios, edge cases, and implementation issues
+	- `specification.md` — Product requirements and system design
+	- `memory.md` — Project state and context
+	- `TODO.md` — Task tracking
 - **Guidelines:** `.github/instructions/development.instructions.md` (workflow, testing, lint/type policy)
-- **Memory:** `memory.md` (project state)
-- **TODOs:** `TODO.md` (task tracking)
 - **Instructions:** `.github/copilot-instructions.md` and `.github/instructions/rules.instructions.md`
 
 ### Validation Checklist

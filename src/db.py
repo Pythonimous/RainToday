@@ -5,8 +5,24 @@ from typing import Dict
 DB_PATH = "data/stats.db"
 
 
+def _get_connection() -> sqlite3.Connection:
+    """
+    Create a database connection with optimal settings for concurrency.
+
+    - WAL mode allows concurrent reads during writes
+    - Short timeout (1s) fails fast instead of blocking
+    - Each connection is short-lived (closed after each operation)
+    """
+    conn = sqlite3.connect(DB_PATH, timeout=1.0)
+    conn.execute("PRAGMA busy_timeout = 1000")
+    return conn
+
+
 def init_db() -> None:
-    conn = sqlite3.connect(DB_PATH)
+    """Initialize database schema with WAL mode for concurrency."""
+    conn = _get_connection()
+    # WAL mode is critical for concurrent access
+    conn.execute("PRAGMA journal_mode=WAL")
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS visit_stats (
@@ -25,46 +41,44 @@ def init_db() -> None:
 
 
 def increment_visits() -> Dict[str, int]:
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+    """
+    Increment visit counters atomically using a single SQL statement.
+
+    Key optimizations:
+    - Single UPDATE statement with CASE for date rollover
+    - No separate SELECT before UPDATE (eliminates race window)
+    - WAL mode allows concurrent reads
+    - SQLite busy_timeout handles lock contention automatically
+    """
     today = date.today().isoformat()
+    conn = _get_connection()
 
     try:
-        # Begin transaction
-        conn.execute("BEGIN TRANSACTION")
+        cursor = conn.cursor()
 
-        # Fetch current stats
-        cursor.execute(
-            "SELECT total_visits, today_visits, last_updated "
-            "FROM visit_stats WHERE id = 1"
-        )
-        total_visits, today_visits, last_updated = cursor.fetchone()
-
-        # Reset today's visits if the date has changed
-        if last_updated != today:
-            today_visits = 0
-
-        # Increment counts
-        total_visits += 1
-        today_visits += 1
-
-        # Update the database
+        # Atomic increment with conditional date rollover in one statement
+        # This eliminates the race condition between read and write
         cursor.execute(
             """
             UPDATE visit_stats
-            SET total_visits = ?, today_visits = ?, last_updated = ?
+            SET total_visits = total_visits + 1,
+                today_visits = CASE
+                    WHEN last_updated = ? THEN today_visits + 1
+                    ELSE 1
+                END,
+                last_updated = ?
             WHERE id = 1
             """,
-            (total_visits, today_visits, today)
+            (today, today)
         )
 
-        # Commit transaction
+        # Fetch the updated values
+        cursor.execute(
+            "SELECT total_visits, today_visits FROM visit_stats WHERE id = 1"
+        )
+        result = cursor.fetchone()
+
         conn.commit()
-    except Exception as e:
-        # Rollback transaction on failure
-        conn.rollback()
-        raise e
+        return {"total_visits": result[0], "today_visits": result[1]}
     finally:
         conn.close()
-
-    return {"total_visits": total_visits, "today_visits": today_visits}

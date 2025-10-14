@@ -58,6 +58,10 @@ def test_horizon_affects_rain_query(app_page: Page) -> None:
     app_page.route("**/geocode?*", handle_geocode)
     app_page.route("**/rain?*", handle_rain)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Set slider to "3h"
     slider = app_page.locator("#horizon-slider")
     slider.fill("2")
@@ -74,8 +78,8 @@ def test_horizon_affects_rain_query(app_page: Page) -> None:
     search_button.click()
 
     # Wait for result
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("Yes, bring an umbrella!", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("Yes, bring an umbrella!", timeout=5000)
 
     # Verify the rain endpoint was called with horizon=3h
     assert len(requests_received) > 0
@@ -106,6 +110,10 @@ def test_horizon_1h_parameter(app_page: Page) -> None:
     app_page.route("**/geocode?*", handle_geocode)
     app_page.route("**/rain?*", handle_rain)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Set slider to "1h"
     slider = app_page.locator("#horizon-slider")
     slider.fill("1")
@@ -118,8 +126,8 @@ def test_horizon_1h_parameter(app_page: Page) -> None:
     search_button.click()
 
     # Wait for result
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("Clear skies ahead!", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("Clear skies ahead!", timeout=5000)
 
     # Verify horizon=1h was sent
     assert len(requests_received) > 0

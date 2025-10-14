@@ -10,6 +10,7 @@ applyTo: "**"
 - Cover integrations via `pytest -m integration`; mock external services.
 - Combine coverage with `pytest -m "unit or integration"` when reviewing.
 - Execute `pytest -m e2e` only when end-to-end behavior must be proven.
+- Align `pytest -m e2e` coverage with the flows listed in docs/user_flows/index.md; add scenarios when new UF files appear.
 - Prefer `./scripts/run_tests.sh` for repeatable local runs.
 - Launch `./scripts/run_e2e_tests.sh` when browser flows are required.
 - Share fixtures through `tests/conftest.py` to avoid duplication.

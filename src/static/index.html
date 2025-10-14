@@ -13,6 +13,9 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .fade-in-up { animation: fadeInUp 300ms ease-out both; }
+    /* Collapsible panel transitions */
+    #controls-panel.panel-collapsed { max-height: 0; overflow: hidden; opacity: 0; transform: translateY(-6px); transition: max-height 320ms ease, opacity 220ms ease, transform 220ms ease; }
+    #controls-panel.panel-open { max-height: 600px; overflow: hidden; opacity: 1; transform: translateY(0); transition: max-height 420ms ease, opacity 260ms ease, transform 260ms ease; }
   </style>
 </head>
 <body class="min-h-screen bg-indigo-100 flex items-center justify-center transition-colors duration-500">
@@ -20,45 +23,47 @@
     <!-- Header / Theme toggle -->
     <header class="flex items-center justify-between mb-4">
       <h1 class="text-3xl font-bold text-indigo-700">Will It Rain Today?</h1>
-      <div class="flex items-center gap-2">
-        <label for="theme-select" class="text-xs text-gray-600">Theme</label>
-        <select id="theme-select" class="px-2 py-1 text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400">
-          <option value="indigo" selected>Indigo</option>
-          <option value="emerald">Emerald</option>
-        </select>
-      </div>
+      <!-- theme selector removed to simplify UI -->
     </header>
 
     <p class="text-gray-700 mb-4">Find out if you need an umbrella, with a touch of humor.</p>
 
-    <!-- Primary action -->
+    <!-- Controls are available via the collapsed Refine panel below -->
+
+    <!-- Primary action (kept for compatibility but hidden because we auto-check on load) -->
     <button id="rain-btn"
-      class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition-colors mb-4">
+      class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition-colors mb-4 hidden">
       Will it rain today?
     </button>
 
-    <!-- Horizon control -->
-    <section class="mb-4">
-      <label for="horizon-slider" class="block text-sm font-medium text-gray-700 mb-1">Forecast horizon</label>
-      <div class="flex items-center gap-3">
-        <input id="horizon-slider" type="range" min="0" max="3" value="0" class="w-full accent-indigo-600" />
-        <span id="horizon-label" class="text-sm font-semibold text-indigo-700">Today</span>
-      </div>
-    </section>
-
-    <!-- City search -->
-    <section class="mb-2">
-      <form id="city-form" class="flex gap-2" autocomplete="off" onsubmit="return false;">
-        <input id="city-input" type="text" placeholder="Enter city name..." class="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
-        <button id="city-search-btn" type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg shadow">Search</button>
-      </form>
-      <p class="text-xs text-gray-500 mt-2" id="city-disclaimer">
-        Tip: For best results, enter city names in English or Latin characters. Non-Latin scripts (e.g., 中文, кириллица) may not be supported yet.
-      </p>
-    </section>
-
     <!-- Result -->
     <div id="result" class="mt-6 text-center min-h-[1.5rem]" aria-live="polite"></div>
+      <div id="result-inner" class="fade-in-up">
+        <div class="inline-block px-6 py-6 rounded-lg bg-white/70 shadow-sm">
+          <div id="result-message" class="font-bold text-3xl">Checking location...</div>
+          <div id="result-sub" class="text-sm text-gray-600 mt-2">Trying to detect your location to give a quick answer.</div>
+          <div class="mt-2 flex items-center gap-3">
+            <button id="try-again-btn" class="text-sm px-3 py-1 rounded-md border border-gray-300">Try again</button>
+            <button id="refine-toggle" class="text-sm px-3 py-1 rounded-md bg-indigo-100 hover:bg-indigo-200">Refine location</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collapsible controls panel (hidden by default) -->
+    <section id="controls-panel" class="mb-2 mt-4 panel-collapsed">
+      <form id="city-form" class="flex gap-2" autocomplete="off" onsubmit="return false;">
+        <input id="city-input" type="text" placeholder="Enter city name..." class="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+        <button id="city-search-btn" type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg shadow">Check</button>
+      </form>
+      <div class="mt-3 mb-2">
+        <label for="horizon-slider" class="block text-sm font-medium text-gray-700 mb-1">Forecast horizon</label>
+        <div class="flex items-center gap-3">
+          <input id="horizon-slider" type="range" min="0" max="3" value="0" class="w-full accent-indigo-600" />
+          <span id="horizon-label" class="text-sm font-semibold text-indigo-700">Today</span>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Footer with visit counts and credits -->
@@ -78,7 +83,7 @@
   <script>
   const resultDiv = document.getElementById('result');
   const rainBtn = document.getElementById('rain-btn');
-  const themeSelect = document.getElementById('theme-select');
+  // theme selector removed; default accent applied below
   const heading = document.querySelector('h1');
   const citySearchBtn = document.getElementById('city-search-btn');
   const cityInputEl = document.getElementById('city-input');
@@ -126,24 +131,16 @@
           slider: ['accent-indigo-600'],
           label: ['text-indigo-700'],
           focusRing: 'focus:ring-indigo-400'
-        },
-        emerald: {
-          heading: ['text-emerald-700'],
-          rainBtn: ['bg-emerald-600', 'hover:bg-emerald-700'],
-          searchBtn: ['bg-emerald-500', 'hover:bg-emerald-600'],
-          slider: ['accent-emerald-600'],
-          label: ['text-emerald-700'],
-          focusRing: 'focus:ring-emerald-400'
         }
       };
 
       // Remove any known accent classes
-      const allHeading = ['text-indigo-700','text-emerald-700'];
-      const allBtnPrimary = ['bg-indigo-600','hover:bg-indigo-700','bg-emerald-600','hover:bg-emerald-700'];
-      const allBtnSecondary = ['bg-indigo-500','hover:bg-indigo-600','bg-emerald-500','hover:bg-emerald-600'];
-      const allSlider = ['accent-indigo-600','accent-emerald-600'];
-      const allLabel = ['text-indigo-700','text-emerald-700'];
-      const allRings = ['focus:ring-indigo-400','focus:ring-emerald-400'];
+  const allHeading = ['text-indigo-700'];
+  const allBtnPrimary = ['bg-indigo-600','hover:bg-indigo-700'];
+  const allBtnSecondary = ['bg-indigo-500','hover:bg-indigo-600'];
+  const allSlider = ['accent-indigo-600'];
+  const allLabel = ['text-indigo-700'];
+  const allRings = ['focus:ring-indigo-400'];
 
       heading.classList.remove(...allHeading);
       rainBtn.classList.remove(...allBtnPrimary);
@@ -161,36 +158,138 @@
       cityInputEl.classList.add(chosen.focusRing);
     }
 
-    themeSelect.addEventListener('change', () => setAccent(themeSelect.value));
-    // Initialize with default
-    setAccent('indigo');
+  // Initialize with default accent
+  setAccent('indigo');
 
-    // City search logic
-    document.getElementById('city-form').addEventListener('submit', async (e) => {
+    // City search logic (used by the collapsible controls)
+    async function handleCityFormSubmit(e) {
       e.preventDefault();
       const city = document.getElementById('city-input').value.trim();
       if (!city) {
-        resultDiv.textContent = 'Please enter a city name.';
+        setResultText('Please enter a city name.');
         return;
       }
-      resultDiv.textContent = 'Searching for city...';
+      setResultText('Searching for city...');
       try {
         const geoRes = await fetch(`/geocode?city=${encodeURIComponent(city)}`);
         if (!geoRes.ok) throw new Error('Geocoding failed');
         const geo = await geoRes.json();
-        resultDiv.textContent = 'Checking the weather...';
+        setResultText('Checking the weather...');
         const horizonIdx = parseInt(horizonSlider.value, 10);
         const horizon = horizonOptions[horizonIdx].value;
         const rainRes = await fetch(`/rain?lat=${geo.lat}&lon=${geo.lon}&horizon=${horizon}`);
         if (!rainRes.ok) throw new Error('Weather fetch failed');
         const data = await rainRes.json();
-        // Animate result display
-        resultDiv.innerHTML = `<div class="inline-block px-3 py-2 rounded-lg bg-white/70 shadow-sm fade-in-up"><span class="font-bold text-lg">${(data.message ?? 'No data')}</span></div>`;
-        setBackground(data.condition, data.message);
+        // Update large result area
+        setResult(data.message ?? 'No data', data.condition);
       } catch (err) {
-        resultDiv.textContent = 'Could not find city or fetch weather.';
+        setResultText('Could not find city or fetch weather.');
         setBackground(null, '');
       }
+    }
+    document.getElementById('city-form').addEventListener('submit', handleCityFormSubmit);
+
+    // Utility to set the main result area text
+    function setResultText(text) {
+      const msgEl = document.getElementById('result-message');
+      const subEl = document.getElementById('result-sub');
+      if (msgEl) msgEl.textContent = text;
+      if (subEl) subEl.textContent = '';
+    }
+
+    function setResult(message, condition) {
+      const msgEl = document.getElementById('result-message');
+      const subEl = document.getElementById('result-sub');
+      if (msgEl) msgEl.textContent = message;
+      if (subEl) subEl.textContent = '';
+      setBackground(condition, message);
+    }
+
+    // Auto-check logic: attempt geolocation on load (with timeout), otherwise reveal refine controls
+  const controlsPanel = document.getElementById('controls-panel');
+  // Ensure controls panel is collapsed by default
+  if (controlsPanel) controlsPanel.classList.add('panel-collapsed');
+    const refineToggle = document.getElementById('refine-toggle');
+    const tryAgainBtn = document.getElementById('try-again-btn');
+
+    function showControls(toggle) {
+      if (!controlsPanel) return;
+      const isOpen = controlsPanel.classList.contains('panel-open');
+      const shouldOpen = typeof toggle === 'boolean' ? toggle : !isOpen;
+      controlsPanel.classList.toggle('panel-open', shouldOpen);
+      controlsPanel.classList.toggle('panel-collapsed', !shouldOpen);
+      if (shouldOpen) document.getElementById('city-input').focus();
+    }
+
+    if (refineToggle) {
+      refineToggle.addEventListener('click', () => showControls());
+    }
+
+    // Close controls on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') showControls(false);
+    });
+
+    if (tryAgainBtn) {
+      tryAgainBtn.addEventListener('click', () => {
+        attemptAutoCheck();
+      });
+    }
+
+    async function attemptAutoCheck() {
+      setResultText('Checking location...');
+      // Small helper to wrap getCurrentPosition in a promise with timeout
+      function getPosition(options = {}) {
+        return new Promise((resolve, reject) => {
+          if (!navigator.geolocation) return reject(new Error('no_geolocation'));
+          let timedOut = false;
+          const timer = setTimeout(() => {
+            timedOut = true;
+            reject(new Error('timeout'));
+          }, 7000);
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              if (timedOut) return;
+              clearTimeout(timer);
+              resolve(pos);
+            },
+            (err) => {
+              if (timedOut) return;
+              clearTimeout(timer);
+              reject(err);
+            },
+            options
+          );
+        });
+      }
+
+      try {
+        const pos = await getPosition({ enableHighAccuracy: false, maximumAge: 0 });
+        const lat = pos.coords.latitude.toFixed(4);
+        const lon = pos.coords.longitude.toFixed(4);
+        setResultText('Checking the weather...');
+        const horizonIdx = parseInt(horizonSlider.value, 10);
+        const horizon = horizonOptions[horizonIdx].value;
+        const rainRes = await fetch(`/rain?lat=${lat}&lon=${lon}&horizon=${horizon}`);
+        if (!rainRes.ok) throw new Error('Weather API error');
+        const data = await rainRes.json();
+        setResult(data.message ?? 'No data', data.condition);
+      } catch (err) {
+        // If geolocation fails or times out, show refine controls
+        if (err && err.code === err.PERMISSION_DENIED) {
+          setResultText('Location access denied. Use "Refine" to enter a city.');
+        } else if (err && err.message === 'timeout') {
+          setResultText('Location timed out. Use "Refine" or try again.');
+        } else {
+          setResultText('Location not available. Use "Refine" to enter a city.');
+        }
+        showControls(false);
+      }
+    }
+
+    // Try auto-check on load
+    window.addEventListener('load', () => {
+      attemptAutoCheck();
     });
 
     document.getElementById('rain-btn').addEventListener('click', () => {

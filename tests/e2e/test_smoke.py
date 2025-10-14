@@ -23,7 +23,7 @@ def test_homepage_loads(app_page: Page) -> None:
 
     search_button = app_page.locator("#city-search-btn")
     expect(search_button).to_be_visible()
-    expect(search_button).to_have_text("Search")
+    expect(search_button).to_have_text("Check")
 
     # Check horizon slider
     horizon_slider = app_page.locator("#horizon-slider")
@@ -35,11 +35,6 @@ def test_homepage_loads(app_page: Page) -> None:
     horizon_label = app_page.locator("#horizon-label")
     expect(horizon_label).to_be_visible()
     expect(horizon_label).to_have_text("Today")
-
-    # Check main action button
-    rain_button = app_page.locator("#rain-btn")
-    expect(rain_button).to_be_visible()
-    expect(rain_button).to_have_text("Will it rain today?")
 
     # Check result container exists (even if empty)
     result_div = app_page.locator("#result")

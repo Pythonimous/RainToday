@@ -29,6 +29,10 @@ def test_city_search_flow(app_page: Page) -> None:
     app_page.route("**/geocode?*", handle_geocode)
     app_page.route("**/rain?*", handle_rain)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Enter city name
     city_input = app_page.locator("#city-input")
     city_input.fill("London")
@@ -38,8 +42,8 @@ def test_city_search_flow(app_page: Page) -> None:
     search_button.click()
 
     # Wait for result to appear
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("No rain expected today!", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("No rain expected today!", timeout=5000)
 
     # Verify background changed
     body = app_page.locator("body")
@@ -49,13 +53,17 @@ def test_city_search_flow(app_page: Page) -> None:
 @pytest.mark.e2e
 def test_city_search_empty_input(app_page: Page) -> None:
     """Test that submitting empty city name shows an error."""
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Leave city input empty and click search
     search_button = app_page.locator("#city-search-btn")
     search_button.click()
 
     # Should show validation message
-    result_div = app_page.locator("#result")
-    expect(result_div).to_have_text("Please enter a city name.")
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_have_text("Please enter a city name.")
 
 
 @pytest.mark.e2e
@@ -68,6 +76,10 @@ def test_city_search_geocode_failure(app_page: Page) -> None:
 
     app_page.route("**/geocode?*", handle_geocode_error)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Enter city and search
     city_input = app_page.locator("#city-input")
     city_input.fill("NonexistentCity123")
@@ -76,8 +88,8 @@ def test_city_search_geocode_failure(app_page: Page) -> None:
     search_button.click()
 
     # Should show error message
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("Could not find city", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("Could not find city", timeout=5000)
 
 
 @pytest.mark.e2e
@@ -102,6 +114,10 @@ def test_city_search_with_special_characters(app_page: Page) -> None:
     app_page.route("**/geocode?*", handle_geocode)
     app_page.route("**/rain?*", handle_rain)
 
+    # Open the refine panel
+    refine_toggle = app_page.locator("#refine-toggle")
+    refine_toggle.click()
+
     # Enter city with spaces
     city_input = app_page.locator("#city-input")
     city_input.fill("São Paulo")
@@ -110,8 +126,8 @@ def test_city_search_with_special_characters(app_page: Page) -> None:
     search_button.click()
 
     # Verify result appears
-    result_div = app_page.locator("#result")
-    expect(result_div).to_contain_text("Maybe some drizzle?", timeout=5000)
+    result_message = app_page.locator("#result-message")
+    expect(result_message).to_contain_text("Maybe some drizzle?", timeout=5000)
 
     # Verify background changed to yellow (maybe condition)
     body = app_page.locator("body")

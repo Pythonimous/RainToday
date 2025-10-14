@@ -10,6 +10,8 @@ applyTo: "**"
 - Spot-check style with `flake8` when rapid feedback helps.
 - Run `mypy .` and resolve every type error.
 - Run `pytest -m lint` to enforce the shared lint gate.
+- Review docs/user_flows/index.md for affected journeys; update or add UF files when scope changes.
 - Capture durable context in `memory.md` as you go.
+- When adding a flow, log the identifier in the index and plan matching end-to-end coverage.
 - When the work is stable, execute `.github/prompts/close-phase.prompt.md`.
 - Repeat the loop until the feature is ready to hand off.

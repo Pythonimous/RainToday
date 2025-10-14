@@ -164,13 +164,13 @@
 
 **Goal:** Improve visuals and polish. Thoroughly discuss all the changes with the user throughout.
 
-* [ ] Rearrange the UI elements to make it make more logical from a user flow standpoint. — implemented, pending visual review.
-* [ ] Add color themes and subtle animations. — implemented, pending visual review.
-* [ ] Use responsive design. — implemented, pending visual review.
-* [ ] Add transition effects for result display. — implemented, pending visual review.
-* [ ] Create footer with visit count and credits. — implemented, pending visual review.
+* [x] Rearrange the UI elements to make it make more logical from a user flow standpoint. — Auto-geolocation on load, collapsible refine panel.
+* [x] Add color themes and subtle animations. — Default indigo accent, fade-in animations, panel transitions.
+* [x] Use responsive design. — Responsive layout maintained from previous phases.
+* [x] Add transition effects for result display. — fadeInUp animation, smooth panel transitions.
+* [x] Create footer with visit count and credits. — Footer with visit counts already in place from Phase 9.
 
-**Deliverable:** Polished, visually dynamic UI.
+**Deliverable:** Polished, visually dynamic UI with auto-geolocation and collapsible controls.
 
 ---
 
@@ -203,6 +203,8 @@
 
 ## Phase 13. Optional / Stretch Goals
 
+* [ ] Improve database concurrency handling: Implement async write queue or connection pool to reduce "database is locked" errors under high concurrent load. Current 1s timeout with fail-fast strategy works for typical usage but could be optimized for production scale.
+* [ ] Fix geolocation timeout mechanism: The app's 7-second timeout doesn't fire before browser permission denial. When geolocation hangs or is slow, browsers call the error callback with PERMISSION_DENIED instead of letting the app's timeout trigger. This affects both manual testing and E2E tests. Consider adjusting timeout logic or handling this browser behavior differently.
 * [ ] Caching to minimize repeated API calls.
 * [ ] Lightweight analytics (Plausible / GoatCounter).
 * [ ] Social media shareable image.
