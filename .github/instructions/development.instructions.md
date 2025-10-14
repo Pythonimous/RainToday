@@ -10,7 +10,9 @@ applyTo: "**"
 - Spot-check style with `flake8` when rapid feedback helps.
 - Run `mypy .` and resolve every type error.
 - Run `pytest -m lint` to enforce the shared lint gate.
+- Keep functions below the flake8 `max-complexity=10` threshold or split them before committing.
 - Review docs/user_flows/index.md for affected journeys; update or add UF files when scope changes.
+- Structure code following `docs/architecture.md`: thin handlers, focused helpers, and explicit service boundaries.
 - Capture durable context in `memory.md` as you go.
 - When adding a flow, log the identifier in the index and plan matching end-to-end coverage.
 - When the work is stable, execute `.github/prompts/close-phase.prompt.md`.
