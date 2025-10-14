@@ -1,14 +1,14 @@
 import pytest
-from fastapi import HTTPException
 
-from src import main
+from src.services import geocode
 
 
 class _DummyResponse:
     """Minimal mock for requests.Response used by the geocode helper."""
 
-    def __init__(self, payload):
+    def __init__(self, payload, status_code=200):
         self._payload = payload
+        self.status_code = status_code
 
     def json(self):
         return self._payload
@@ -21,9 +21,9 @@ def test_geocode_returns_first_result(monkeypatch):
     def fake_get(url, params, timeout):  # pragma: no cover - simple shim
         return _DummyResponse(payload)
 
-    monkeypatch.setattr(main.requests, "get", fake_get)
+    monkeypatch.setattr(geocode.requests, "get", fake_get)
 
-    result = main.geocode("London")
+    result = geocode.search_city("London")
 
     assert result["lat"] == 51.5074
     assert result["lon"] == -0.1278
@@ -35,12 +35,10 @@ def test_geocode_handles_missing_results(monkeypatch):
     def fake_get(url, params, timeout):  # pragma: no cover - simple shim
         return _DummyResponse({"results": []})
 
-    monkeypatch.setattr(main.requests, "get", fake_get)
+    monkeypatch.setattr(geocode.requests, "get", fake_get)
 
-    with pytest.raises(HTTPException) as exc_info:
-        main.geocode("Nowhereville")
-
-    assert exc_info.value.status_code == 404
+    with pytest.raises(geocode.CityNotFoundError):
+        geocode.search_city("Nowhereville")
 
 
 @pytest.mark.unit
@@ -48,9 +46,32 @@ def test_geocode_handles_request_failure(monkeypatch):
     def fake_get(url, params, timeout):  # pragma: no cover - simple shim
         raise RuntimeError("connection error")
 
-    monkeypatch.setattr(main.requests, "get", fake_get)
+    monkeypatch.setattr(geocode.requests, "get", fake_get)
 
-    with pytest.raises(HTTPException) as exc_info:
-        main.geocode("London")
+    with pytest.raises(geocode.GeocodeServiceError):
+        geocode.search_city("London")
 
-    assert exc_info.value.status_code == 502
+
+@pytest.mark.unit
+def test_geocode_handles_http_404(monkeypatch):
+    def fake_get(url, params, timeout):
+        return _DummyResponse({}, status_code=404)
+
+    monkeypatch.setattr(geocode.requests, "get", fake_get)
+
+    with pytest.raises(geocode.CityNotFoundError):
+        geocode.search_city("Paris")
+
+
+@pytest.mark.unit
+def test_geocode_rejects_malformed_payload(monkeypatch):
+    class BadResponse:
+        status_code = 200
+
+        def json(self):
+            raise ValueError("bad payload")
+
+    monkeypatch.setattr(geocode.requests, "get", lambda *args, **kwargs: BadResponse())
+
+    with pytest.raises(geocode.GeocodeServiceError):
+        geocode.search_city("Lisbon")

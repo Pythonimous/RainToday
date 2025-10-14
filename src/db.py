@@ -82,3 +82,19 @@ def increment_visits() -> Dict[str, int]:
         return {"total_visits": result[0], "today_visits": result[1]}
     finally:
         conn.close()
+
+
+def get_visit_stats() -> Dict[str, int]:
+    """Fetch the current visit statistics without mutating the database."""
+    conn = _get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT total_visits, today_visits FROM visit_stats WHERE id = 1"
+        )
+        row = cursor.fetchone()
+        if row is None:
+            return {"total_visits": 0, "today_visits": 0}
+        return {"total_visits": row[0], "today_visits": row[1]}
+    finally:
+        conn.close()

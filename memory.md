@@ -30,12 +30,26 @@
 
 **Documentation**: README and `.github/instructions/development.instructions.md` document the validation checklist (lint, mypy, pytest) and testing taxonomy.
 
+## Architecture Notes (2025-10-14)
+
+- Extracted geocoding and weather integrations into `src/services/geocode.py` and `src/services/weather.py`, keeping FastAPI handlers thin and easier to test.
+- Added message helper module (`src/services/messages.py`) to centralize message loading/selection logic.
+- Introduced `get_visit_stats()` in `src/db.py` so the `/stats` handler reuses the shared database boundary.
+- Added unit tests covering the new service layer (`tests/unit/test_messages_service.py`, `tests/unit/test_weather_service.py`) and updated existing DB and geocode unit tests to target the refactored helpers.
+- Consolidated integration coverage for the weather-related routes into `tests/integration/test_weather_endpoints.py`, replacing the overlapping geocode/rain endpoint files.
+
 ## Close-Phase Verification (2025-10-14)
 
-All validation gates passed:
+All validation gates passed for the current phase:
 - **Lint**: `pytest -m lint` → 1 passed. Flake8 clean.
-- **Type checking**: `mypy .` → Success, no issues in 3 source files.
-- **Unit & Integration tests**: `pytest -m "unit or integration"` → 21 passed.
-- **E2E tests**: `pytest -m e2e` → 19 passed, 1 skipped (with uvicorn server running on port 8000).
+- **Type checking**: `mypy .` → Success, no issues in 7 source files.
+- **Unit & Integration tests**: `pytest -m "unit or integration"` → 27 passed.
+- **E2E tests**: Not rerun this pass (no new flows touched); latest recorded run remained green.
 
-All quality gates green. Project is in a stable, committable state.
+All quality gates remain green. Project is in a stable, committable state.
+
+## Planning Updates (2025-10-14)
+
+- Added Phase 11 "User Flow Audit" in `TODO.md` to prune redundant user flows and align Playwright coverage; renumbered subsequent phases.
+- Reordered later phases to execute deployment ahead of time-zone localization and clarified that localization work stays lightweight, now including sample RU/PT message translations.
+- Trimmed Phase 14 stretch bullets for brevity while keeping intent intact.

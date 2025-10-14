@@ -174,16 +174,17 @@
 
 ---
 
-## Phase 11. Time Zone and Localization
+## Phase 11. User Flow Audit
 
-**Goal:** Ensure local “today” correctness.
+**Goal:** Align documented user flows and E2E coverage with current product behaviour.
 
-* [ ] Convert UTC to local timezone on backend.
-* [ ] Adjust query range for local date boundaries.
-* [ ] Validate daylight saving handling.
-* [ ] Prepare basic i18n structure.
+* [ ] Inventory existing entries in `docs/user_flows/` against live features and remove redundant flows.
+* [ ] Update `docs/user_flows/index.md` to drop retired identifiers and reflect the streamlined set.
+* [ ] Identify missing or newly added journeys, author corresponding UF files, and link them in the index.
+* [ ] Add Playwright E2E scenarios that exercise each newly documented flow.
+* [ ] Prune or refactor overlapping Playwright tests so the suite stays lean while remaining green.
 
-**Deliverable:** Accurate “today” handling in all timezones.
+**Deliverable:** Current, non-duplicative user flow documentation with matching automated coverage.
 
 ---
 
@@ -201,13 +202,27 @@
 
 ---
 
-## Phase 13. Optional / Stretch Goals
+## Phase 13. Time Zone and Localization
 
-* [ ] Improve database concurrency handling: Implement async write queue or connection pool to reduce "database is locked" errors under high concurrent load. Current 1s timeout with fail-fast strategy works for typical usage but could be optimized for production scale.
-* [ ] Fix geolocation timeout mechanism: The app's 7-second timeout doesn't fire before browser permission denial. When geolocation hangs or is slow, browsers call the error callback with PERMISSION_DENIED instead of letting the app's timeout trigger. This affects both manual testing and E2E tests. Consider adjusting timeout logic or handling this browser behavior differently.
-* [ ] Caching to minimize repeated API calls.
-* [ ] Lightweight analytics (Plausible / GoatCounter).
-* [ ] Social media shareable image.
-* [ ] Multi-language support.
-* [ ] Persistent user preferences.
-* [ ] Animated weather icons or subtle effects.
+**Goal:** Serve “today” in the requester’s local time without expanding into full localization.
+
+* [ ] Convert forecast timestamps to the user’s local timezone before calculating rain windows.
+* [ ] Adjust query range to respect local day boundaries and confirm daylight saving transitions.
+* [ ] Provide a minimal i18n scaffold (e.g., message catalog placeholder) to enable future translation work.
+* [ ] Translate core “Will it rain?” messages into at least two locales (e.g., Russian, Portuguese) to validate the pipeline.
+
+**Deliverable:** Correct local-day responses with a lightweight path toward localization.
+
+---
+
+## Phase 14. Optional / Stretch Goals
+
+* [ ] Harden SQLite writes (async queue or pool) to reduce lock errors under load.
+* [ ] Improve geolocation timeout handling so slow browsers surface a friendly retry path.
+* [ ] Record Open-Meteo fixtures (pytest-recording or similar) for faster, stable tests.
+* [ ] Add simple caching layer for repeated API calls.
+* [ ] Integrate lightweight analytics (e.g., Plausible, GoatCounter).
+* [ ] Generate a shareable social image.
+* [ ] Extend UI copy beyond English.
+* [ ] Remember user preferences between visits.
+* [ ] Explore animated weather accents.
