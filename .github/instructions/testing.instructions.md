@@ -14,3 +14,4 @@ applyTo: "**"
 - Prefer `./scripts/run_tests.sh` for repeatable local runs.
 - Launch `./scripts/run_e2e_tests.sh` when browser flows are required.
 - Share fixtures through `tests/conftest.py` to avoid duplication.
+- If end-to-end tests fail, ensure the server is running on port 8000. If it is offline, use `uvicorn src.main:app --host 0.0.0.0 --port 8000 > /tmp/uvicorn.log 2>&1 &` to start it in the background, and `pkill -f "uvicorn src.main:app"` to stop it.
