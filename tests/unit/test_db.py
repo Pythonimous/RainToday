@@ -1,6 +1,6 @@
 import pytest
 from datetime import date, timedelta
-from app.db import increment_visits
+from src.db import increment_visits
 from unittest.mock import Mock, patch
 
 DB_PATH = "data/stats.db"

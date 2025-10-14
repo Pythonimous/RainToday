@@ -1,56 +1,15 @@
 ---
 applyTo: "**"
 ---
-# Testing Conventions
+# Testing Checklist
 
-All tests must live in the `tests/` directory and be organized by type:
-
-```
-├──
-tests/
-├── unit/          # Isolated logic tests
-├── integration/   # Component and endpoint interaction tests
-├── e2e/           # Full user-flow browser tests (Playwright)
-└── lint/          # Flake8 style checks
-
-
-```
-
-### Unit Tests
-- Validate **individual functions** or classes in isolation.
-- Should **not perform network calls** or depend on other services.
-- Mark each test with `@pytest.mark.unit` and run them via `pytest -m unit`.
-
-### Integration Tests
-- Validate **FastAPI endpoints** and **multi-component interactions**.
-- Use FastAPI `TestClient` or similar tools for HTTP calls.
-- Mark with `@pytest.mark.integration` and run via `pytest -m integration`.
-- Mock external APIs (`pytest-mock`, `unittest.mock`) so tests stay deterministic.
-- Add or update integration coverage whenever endpoints or cross-module flows change.
-
-### End-to-End (E2E) Tests
-- Live in `tests/e2e/`.
-- Use **Playwright** to exercise full browser journeys.
-- Run with `npx playwright test`.
-- Add or update scenarios whenever UX flows or user-facing behaviors evolve.
-
-### Lint Suite
-- `pytest -m lint` executes `tests/lint/test_flake8.py` to enforce `.flake8`.
-- Fix all reported style issues before continuing.
-
-### Shared Fixtures
-- Place reusable fixtures in `tests/conftest.py` so they are available across test layers.
-
-See `.github/instructions/development.instructions.md` for the full workflow checklist and when to run each layer.
-
-Run commands:
-```
-
-pytest -m unit
-pytest -m integration
-pytest -m "unit or integration"
-pytest -m lint
-
-```
-
-Refer back to `.github/instructions/rules.instructions.md` for the overall workflow guidelines.
+- Run `flake8` early or rely on `pytest -m lint` for the gate.
+- Run `mypy .` and clear every reported issue.
+- Use `pytest` for the full suite when confidence is needed.
+- Scope to unit work with `pytest -m unit`; keep tests isolated and fast.
+- Cover integrations via `pytest -m integration`; mock external services.
+- Combine coverage with `pytest -m "unit or integration"` when reviewing.
+- Execute `pytest -m e2e` only when end-to-end behavior must be proven.
+- Prefer `./scripts/run_tests.sh` for repeatable local runs.
+- Launch `./scripts/run_e2e_tests.sh` when browser flows are required.
+- Share fixtures through `tests/conftest.py` to avoid duplication.

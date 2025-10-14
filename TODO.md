@@ -164,11 +164,11 @@
 
 **Goal:** Improve visuals and polish. Thoroughly discuss all the changes with the user throughout.
 
-* [ ] Rearrange the UI elements to make it make more logical from a user flow standpoint.
-* [ ] Add color themes and subtle animations.
-* [ ] Use responsive design.
-* [ ] Add transition effects for result display.
-* [ ] Create footer with visit count and credits.
+* [ ] Rearrange the UI elements to make it make more logical from a user flow standpoint. — implemented, pending visual review.
+* [ ] Add color themes and subtle animations. — implemented, pending visual review.
+* [ ] Use responsive design. — implemented, pending visual review.
+* [ ] Add transition effects for result display. — implemented, pending visual review.
+* [ ] Create footer with visit count and credits. — implemented, pending visual review.
 
 **Deliverable:** Polished, visually dynamic UI.
 

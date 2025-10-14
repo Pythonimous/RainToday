@@ -1,10 +1,11 @@
 import sqlite3
 from datetime import date
+from typing import Dict
 
 DB_PATH = "data/stats.db"
 
 
-def init_db():
+def init_db() -> None:
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("""
@@ -23,7 +24,7 @@ def init_db():
     conn.close()
 
 
-def increment_visits():
+def increment_visits() -> Dict[str, int]:
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     today = date.today().isoformat()

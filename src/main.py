@@ -2,24 +2,24 @@ import json
 import random
 import sqlite3
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Any, cast
 
 import requests
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.db import init_db, increment_visits, DB_PATH
+from src.db import init_db, increment_visits, DB_PATH
 
 
 messages_path = Path(__file__).parent.parent / "data" / "messages.json"
 stats_path = Path(__file__).parent.parent / "data" / "stats.json"
 
 
-def load_messages():
+def load_messages() -> Dict[str, List[str]]:
     try:
         with open(messages_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            return cast(Dict[str, List[str]], json.load(f))
     except Exception:
         # Fallback to default messages if file missing or invalid
         return {
@@ -29,7 +29,7 @@ def load_messages():
         }
 
 
-messages = load_messages()
+messages: Dict[str, List[str]] = load_messages()
 
 app = FastAPI()
 
@@ -39,12 +39,12 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 
 @app.on_event("startup")
-def startup_event():
+def startup_event() -> None:
     init_db()
 
 
 @app.get("/geocode")
-def geocode(city: str = Query(..., description="City name to geocode")):
+def geocode(city: str = Query(..., description="City name to geocode")) -> Dict[str, Any]:
     url = "https://geocoding-api.open-meteo.com/v1/search"
     params: Dict[str, str | int] = {
         "name": city,
@@ -73,7 +73,7 @@ def rain(
     lat: float = Query(..., description="Latitude"),
     lon: float = Query(..., description="Longitude"),
     horizon: str = Query("today", description="Forecast horizon: today, 1h, 3h, 6h")
-):
+) -> Dict[str, Any]:
     # Map horizon string to number of hours
     horizon_map: Dict[str, int] = {
         "today": 24,
@@ -133,7 +133,7 @@ def rain(
 
 
 @app.get("/stats")
-def get_stats():
+def get_stats() -> Dict[str, int]:
     """
     Get current visit statistics without incrementing counters.
     Read-only endpoint for displaying stats.
@@ -150,7 +150,7 @@ def get_stats():
 
 
 @app.post("/visit")
-def record_visit():
+def record_visit() -> Dict[str, int]:
     """
     Record a new visit by incrementing counters.
     Returns the updated visit statistics.
@@ -159,7 +159,7 @@ def record_visit():
 
 
 @app.get("/", response_class=HTMLResponse)
-def root():
+def root() -> str:
     # Serve the placeholder landing page
     with open(static_dir / "index.html", "r", encoding="utf-8") as f:
         return f.read()

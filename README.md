@@ -21,7 +21,7 @@ An interactive microservice that answers “Will it rain today?” for your loca
 ## Usage
 1. **Run the server:**
 	```bash
-	uvicorn app.main:app --host 0.0.0.0 --port 8000
+	uvicorn src.main:app --host 0.0.0.0 --port 8000
 	```
 2. **Open your browser:**
 	Go to [http://localhost:8000](http://localhost:8000)
@@ -33,8 +33,8 @@ An interactive microservice that answers “Will it rain today?” for your loca
 	- _Note: For best results, use English or Latin city names. Non-Latin scripts (e.g., 中文, кириллица) may not be supported yet._
 
 ## Development
-- **Backend:** `app/main.py` (FastAPI)
-- **Frontend:** `app/static/index.html` (Tailwind, JS)
+- **Backend:** `src/main.py` (FastAPI)
+- **Frontend:** `src/static/index.html` (Tailwind, JS)
 - **Tests:**
 	- `tests/unit/` — Unit tests (no HTTP calls)
 	- `tests/integration/` — Integration/API endpoint tests
@@ -48,38 +48,54 @@ An interactive microservice that answers “Will it rain today?” for your loca
 
 ### Validation Checklist
 
+### Quick Test Commands
+
+Use the convenience script for common scenarios:
+```bash
+./scripts/run_tests.sh unit          # Unit tests only
+./scripts/run_tests.sh integration   # Integration tests only
+./scripts/run_tests.sh fast          # Unit + integration
+./scripts/run_tests.sh coverage      # With coverage report
+./scripts/run_tests.sh all           # Full validation (no E2E)
+./scripts/run_tests.sh e2e           # E2E tests (requires server)
+./scripts/run_tests.sh full          # Everything including E2E
+```
+
+### Individual Test Commands
+
 - Lint gate:
-	```
+	```bash
 	pytest -m lint
 	```
 - Type checking:
-	```
+	```bash
 	mypy .
 	```
 - Unit tests:
-	```
+	```bash
 	pytest -m unit
 	```
 - Integration tests:
-	```
+	```bash
 	pytest -m integration
 	```
-- End-to-end tests (requires running server):
+- Tests with coverage:
+	```bash
+	pytest -m "unit or integration" --cov=app --cov-report=html
 	```
+- End-to-end tests (requires running server):
+	```bash
 	# Start the server in one terminal:
-	uvicorn app.main:app --host 0.0.0.0 --port 8000
+	uvicorn src.main:app --host 0.0.0.0 --port 8000
 	
 	# Run E2E tests in another terminal:
 	pytest -m e2e
 	
-	# Or run with visible browser (headed mode):
-	pytest -m e2e --headed
-	
-	# Run with a specific browser:
-	pytest -m e2e --browser firefox
+	# Or use the helper script (checks if server is running):
+	./scripts/run_e2e_tests.sh [--headed] [--browser <chromium|firefox|webkit>]
 	```
 - Full test suite:
-	```
+	```bash
 	pytest
 	```
 

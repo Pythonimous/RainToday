@@ -1,7 +1,7 @@
 import pytest
 from fastapi import HTTPException
 
-from app import main
+from src import main
 
 
 class _DummyResponse:

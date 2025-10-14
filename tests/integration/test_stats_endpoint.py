@@ -2,8 +2,8 @@ import sqlite3
 import pytest
 from datetime import date
 from fastapi.testclient import TestClient
-from app.main import app
-from app.db import DB_PATH
+from src.main import app
+from src.db import DB_PATH
 
 client = TestClient(app)
 

@@ -18,4 +18,12 @@
   - `tests/lint/`: Flake8 conformance checks
 - All tests pass: 19 unit/integration tests, lint and mypy checks green.
 
-**Next:** Move to Phase 10 (UI Enhancements) to polish the user interface.
+**Phase 10 (UI Enhancements) implemented — pending user visual sign-off.**
+
+Summary of changes:
+- Reorganized layout: primary action first, then horizon, then city search.
+- Added accent theme toggle (Indigo, Emerald) without altering background color logic used by tests.
+- Fade/slide animation for the result block; kept IDs and selectors stable for tests.
+- Responsive footer with visit counts and a Credits & Source link.
+
+All unit/integration/E2E tests pass after these changes. Once visuals are approved, we will mark Phase 10 as complete and proceed to Phase 11 (Time Zone & Localization).

@@ -7,7 +7,7 @@ counts when the application is stopped and restarted.
 import sqlite3
 import pytest
 from datetime import date
-from app.db import increment_visits, DB_PATH
+from src.db import increment_visits, DB_PATH
 
 
 @pytest.mark.integration
